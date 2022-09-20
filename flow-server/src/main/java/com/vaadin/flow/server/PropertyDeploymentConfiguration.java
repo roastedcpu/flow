@@ -279,10 +279,11 @@ public class PropertyDeploymentConfiguration
 
     @Override
     public boolean isDevToolsEnabled() {
-        return !isProductionMode()
-                && getBooleanProperty(
-                        SERVLET_PARAMETER_DEVMODE_ENABLE_DEV_TOOLS, true)
-                && enableDevServer(); // dev tools excluded from prod bundle
+        return !isProductionMode() && getBooleanProperty(
+                SERVLET_PARAMETER_DEVMODE_ENABLE_DEV_TOOLS, true); // dev tools
+                                                                   // excluded
+                                                                   // from prod
+                                                                   // bundle
     }
 
     /**
