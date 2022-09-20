@@ -197,11 +197,7 @@ public class DevModeInitializer implements Serializable {
             log().debug("Skipping DEV MODE because PRODUCTION MODE is set.");
             return null;
         }
-        if (!config.enableDevServer()) {
-            log().debug(
-                    "Skipping DEV MODE because dev server shouldn't be enabled.");
-            return null;
-        }
+
         // This needs to be set as there is no "current service" available in
         // this call
         FeatureFlags featureFlags = FeatureFlags.get(context);
@@ -210,16 +206,16 @@ public class DevModeInitializer implements Serializable {
 
         featureFlags.setPropertiesLocation(config.getJavaResourceFolder());
 
-        String baseDir = config.getStringProperty(FrontendUtils.PROJECT_BASEDIR,
-                null);
-        if (baseDir == null) {
-            baseDir = getBaseDirectoryFallback();
+        String projectFolder = config
+                .getStringProperty(FrontendUtils.PROJECT_BASEDIR, null);
+        if (projectFolder == null) {
+            projectFolder = getBaseDirectoryFallback();
         }
 
         // Initialize the usage statistics if enabled
         if (config.isUsageStatisticsEnabled()) {
             StatisticsStorage storage = new StatisticsStorage();
-            DevModeUsageStatistics.init(baseDir, storage,
+            DevModeUsageStatistics.init(projectFolder, storage,
                     new StatisticsSender(storage));
         }
 
@@ -229,14 +225,14 @@ public class DevModeInitializer implements Serializable {
         String frontendFolder = config.getStringProperty(PARAM_FRONTEND_DIR,
                 System.getProperty(PARAM_FRONTEND_DIR, DEFAULT_FRONTEND_DIR));
 
-        File flowResourcesFolder = new File(baseDir,
+        File flowResourcesFolder = new File(projectFolder,
                 config.getFlowResourcesFolder());
 
         Lookup lookupFromContext = context.getAttribute(Lookup.class);
         Lookup lookupForClassFinder = Lookup.of(new DevModeClassFinder(classes),
                 ClassFinder.class);
         Lookup lookup = Lookup.compose(lookupForClassFinder, lookupFromContext);
-        Builder builder = new NodeTasks.Builder(lookup, new File(baseDir),
+        Builder builder = new NodeTasks.Builder(lookup, new File(projectFolder),
                 new File(generatedDir), new File(frontendFolder),
                 config.getBuildFolder());
 
@@ -262,7 +258,7 @@ public class DevModeInitializer implements Serializable {
         // TODO: make sure target directories are aligned with build
         // config,
         // see https://github.com/vaadin/flow/issues/9082
-        File target = new File(baseDir, config.getBuildFolder());
+        File target = new File(projectFolder, config.getBuildFolder());
         builder.withWebpack(
                 Paths.get(target.getPath(), "classes", VAADIN_WEBAPP_RESOURCES)
                         .toFile(),
@@ -274,15 +270,16 @@ public class DevModeInitializer implements Serializable {
         if (!config.useV14Bootstrap() && isEndpointServiceAvailable(lookup)) {
             String connectJavaSourceFolder = config.getStringProperty(
                     CONNECT_JAVA_SOURCE_FOLDER_TOKEN,
-                    Paths.get(baseDir, DEFAULT_CONNECT_JAVA_SOURCE_FOLDER)
+                    Paths.get(projectFolder, DEFAULT_CONNECT_JAVA_SOURCE_FOLDER)
                             .toString());
-            String connectApplicationProperties = config.getStringProperty(
-                    CONNECT_APPLICATION_PROPERTIES_TOKEN,
-                    Paths.get(baseDir, DEFAULT_CONNECT_APPLICATION_PROPERTIES)
-                            .toString());
+            String connectApplicationProperties = config
+                    .getStringProperty(CONNECT_APPLICATION_PROPERTIES_TOKEN,
+                            Paths.get(projectFolder,
+                                    DEFAULT_CONNECT_APPLICATION_PROPERTIES)
+                                    .toString());
             String connectOpenApiJsonFile = config
                     .getStringProperty(CONNECT_OPEN_API_FILE_TOKEN,
-                            Paths.get(baseDir, config.getBuildFolder(),
+                            Paths.get(projectFolder, config.getBuildFolder(),
                                     DEFAULT_CONNECT_OPENAPI_JSON_FILE)
                                     .toString());
 
@@ -324,7 +321,7 @@ public class DevModeInitializer implements Serializable {
 
         String frontendGeneratedFolder = config.getStringProperty(
                 PROJECT_FRONTEND_GENERATED_DIR_TOKEN,
-                Paths.get(baseDir, DEFAULT_PROJECT_FRONTEND_GENERATED_DIR)
+                Paths.get(projectFolder, DEFAULT_PROJECT_FRONTEND_GENERATED_DIR)
                         .toString());
 
         JsonObject tokenFileData = Json.createObject();
@@ -333,9 +330,10 @@ public class DevModeInitializer implements Serializable {
                 .withFlowResourcesFolder(flowResourcesFolder)
                 .withFrontendGeneratedFolder(new File(frontendGeneratedFolder))
                 .copyResources(frontendLocations)
-                .copyLocalResources(new File(baseDir,
+                .copyLocalResources(new File(projectFolder,
                         Constants.LOCAL_FRONTEND_RESOURCES_PATH))
-                .enableImportsUpdate(true).runNpmInstall(true)
+                .enableImportsUpdate(true)
+                .runNpmInstall(config.enableDevServer())
                 .populateTokenFileData(tokenFileData)
                 .withEmbeddableWebComponents(true).enablePnpm(enablePnpm)
                 .useGlobalPnpm(useGlobalPnpm)
@@ -347,7 +345,8 @@ public class DevModeInitializer implements Serializable {
 
         Runnable runnable = () -> {
             runNodeTasks(context, tokenFileData, tasks);
-            if (!featureFlags.isEnabled(FeatureFlags.WEBPACK)) {
+            if (config.enableDevServer()
+                    && !featureFlags.isEnabled(FeatureFlags.WEBPACK)) {
                 // For Vite, wait until a VaadinServlet is deployed so we know
                 // which frontend servlet path to use
                 if (VaadinServlet.getFrontendMapping() == null) {
@@ -367,7 +366,10 @@ public class DevModeInitializer implements Serializable {
 
         Lookup devServerLookup = Lookup.compose(lookup,
                 Lookup.of(config, ApplicationConfiguration.class));
-        if (featureFlags.isEnabled(FeatureFlags.WEBPACK)) {
+        if (!config.enableDevServer()) {
+            nodeTasksFuture.getNow(null);
+            return null;
+        } else if (featureFlags.isEnabled(FeatureFlags.WEBPACK)) {
             return new WebpackHandler(devServerLookup, 0,
                     builder.getNpmFolder(), nodeTasksFuture);
         } else {

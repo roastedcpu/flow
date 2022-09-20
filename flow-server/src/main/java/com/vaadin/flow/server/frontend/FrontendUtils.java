@@ -528,18 +528,33 @@ public class FrontendUtils {
         try {
             Optional<DevModeHandler> devModeHandler = DevModeHandlerManager
                     .getDevModeHandler(service);
-            if (!config.isProductionMode() && config.enableDevServer()
-                    && devModeHandler.isPresent()) {
+            if (config.isProductionMode()) {
+                // In production mode, this is on the class path
+                content = getFileFromClassPath(service, path);
+            } else if (config.enableDevServer() && devModeHandler.isPresent()) {
                 content = getFileFromDevModeHandler(devModeHandler.get(), path);
+            } else {
+                // Get directly from the frontend folder in the project
+                content = getFileFromProjectFrontendDir(config, path);
             }
 
-            if (content == null) {
-                content = getFileFromClassPath(service, path);
-            }
             return content != null ? streamToString(content) : null;
         } finally {
             IOUtils.closeQuietly(content);
         }
+    }
+
+    private static InputStream getFileFromProjectFrontendDir(
+            DeploymentConfiguration config, String path) {
+        File f = new File(getProjectFrontendDir(config), path);
+        if (f.exists()) {
+            try {
+                return new FileInputStream(f);
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
+        }
+        return null;
     }
 
     private static InputStream getFileFromClassPath(VaadinService service,
