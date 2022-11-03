@@ -62,6 +62,8 @@ public class Heartbeat {
                 ApplicationConstants.UI_ID_PARAMETER,
                 registry.getApplicationConfiguration().getUIId());
 
+        uri = SharedUtil.addGetParameter(uri, "sourceHost", registry.getApplicationConfiguration().getSourceHost());
+
         registry.getUILifecycle().addHandler(e -> {
             if (e.getUiLifecycle().isTerminated()) {
                 setInterval(-1);

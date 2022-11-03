@@ -66,6 +66,8 @@ public class DefaultDeploymentConfiguration
      */
     public static final int DEFAULT_HEARTBEAT_INTERVAL = 300;
 
+    public static final String DEFAULT_SOURCE_HOST = "unknown";
+
     /**
      * Default value for {@link #getMaxMessageSuspendTimeout()} ()} = {@value} .
      */
@@ -92,6 +94,7 @@ public class DefaultDeploymentConfiguration
     private boolean compatibilityMode;
     private boolean xsrfProtectionEnabled;
     private int heartbeatInterval;
+    private String sourceHost;
     private int maxMessageSuspendTimeout;
     private int webComponentDisconnect;
     private boolean closeIdleSessions;
@@ -126,6 +129,7 @@ public class DefaultDeploymentConfiguration
         checkRequestTiming();
         checkXsrfProtection(log);
         checkHeartbeatInterval();
+        checkSourceHost();
         checkMaxMessageSuspendTimeout();
         checkWebComponentDisconnectTimeout();
         checkCloseIdleSessions();
@@ -205,6 +209,11 @@ public class DefaultDeploymentConfiguration
     @Override
     public int getHeartbeatInterval() {
         return heartbeatInterval;
+    }
+
+    @Override
+    public int getSourceHost() {
+        return sourceHost;
     }
 
     /**
@@ -355,6 +364,21 @@ public class DefaultDeploymentConfiguration
         } catch (NumberFormatException e) {
             warnings.add(WARNING_HEARTBEAT_INTERVAL_NOT_NUMERIC);
             heartbeatInterval = DEFAULT_HEARTBEAT_INTERVAL;
+        }
+    }
+
+    private void checkSourceHost() {
+        try {
+            Scanner scanner = new Scanner(new File("/tmp/this-host.txt"));
+            if(scanner.hasNextLine()) {
+                sourceHost = scanner.nextLine();
+            } else {
+                sourceHost = DEFAULT_SOURCE_HOST;
+            }
+            scanner.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            sourceHost = DEFAULT_SOURCE_HOST;
         }
     }
 

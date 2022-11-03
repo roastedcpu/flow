@@ -187,6 +187,11 @@ public class PropertyDeploymentConfiguration
     }
 
     @Override
+    public int getSourceHost() {
+        return DefaultDeploymentConfiguration.DEFAULT_SOURCE_HOST;
+    }
+
+    @Override
     public int getMaxMessageSuspendTimeout() {
         return DefaultDeploymentConfiguration.DEFAULT_MAX_MESSAGE_SUSPEND_TIMEOUT;
     }

@@ -34,6 +34,7 @@ public class ApplicationConfiguration {
     private int uiId;
     private ErrorMessage sessionExpiredError;
     private int heartbeatInterval;
+    private String sourceHost;
     private int maxMessageSuspendTimeout;
 
     private boolean productionMode;
@@ -160,6 +161,10 @@ public class ApplicationConfiguration {
         return heartbeatInterval;
     }
 
+    public String getSourceHost() {
+        return sourceHost;
+    }
+
     /**
      * Sets the interval for heartbeat requests.
      *
@@ -169,6 +174,10 @@ public class ApplicationConfiguration {
      */
     public void setHeartbeatInterval(int heartbeatInterval) {
         this.heartbeatInterval = heartbeatInterval;
+    }
+
+    public void setSourceHost(String sourceHost) {
+        this.sourceHost = sourceHost;
     }
 
     /**

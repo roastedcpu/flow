@@ -96,6 +96,10 @@ public @interface VaadinServletConfiguration {
     @InitParameterName(InitParameters.SERVLET_PARAMETER_HEARTBEAT_INTERVAL)
     int heartbeatInterval() default DefaultDeploymentConfiguration.DEFAULT_HEARTBEAT_INTERVAL;
 
+
+    @InitParameterName(InitParameters.SERVLET_PARAMETER_SOURCE_HOST)
+    String sourceHost() default DefaultDeploymentConfiguration.DEFAULT_SOURCE_HOST;
+
     /**
      * Whether a session should be closed when all its open UIs have been idle
      * for longer than its configured maximum inactivity time. The default value

@@ -1501,6 +1501,9 @@ public class BootstrapHandler extends SynchronizedRequestHandler {
             appConfig.put("heartbeatInterval",
                     deploymentConfiguration.getHeartbeatInterval());
 
+            appConfig.put("sourceHost",
+                    deploymentConfiguration.getSourceHost());
+
             appConfig.put("maxMessageSuspendTimeout",
                     deploymentConfiguration.getMaxMessageSuspendTimeout());
 

@@ -157,6 +157,9 @@ public class Bootstrapper implements EntryPoint {
         conf.setHeartbeatInterval(
                 jsoConfiguration.getConfigInteger("heartbeatInterval"));
 
+        conf.setSourceHost(
+                jsoConfiguration.getConfigString("sourceHost"));
+
         conf.setMaxMessageSuspendTimeout(
                 jsoConfiguration.getConfigInteger("maxMessageSuspendTimeout"));
 
