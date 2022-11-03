@@ -187,7 +187,7 @@ public class PropertyDeploymentConfiguration
     }
 
     @Override
-    public int getSourceHost() {
+    public String getSourceHost() {
         return DefaultDeploymentConfiguration.DEFAULT_SOURCE_HOST;
     }
 

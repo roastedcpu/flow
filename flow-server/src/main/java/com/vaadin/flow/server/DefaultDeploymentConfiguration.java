@@ -16,9 +16,12 @@
 
 package com.vaadin.flow.server;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
@@ -212,7 +215,7 @@ public class DefaultDeploymentConfiguration
     }
 
     @Override
-    public int getSourceHost() {
+    public String getSourceHost() {
         return sourceHost;
     }
 

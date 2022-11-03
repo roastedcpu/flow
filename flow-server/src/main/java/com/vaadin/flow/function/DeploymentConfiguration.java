@@ -102,6 +102,8 @@ public interface DeploymentConfiguration extends Serializable {
      */
     int getHeartbeatInterval();
 
+    String getSourceHost();
+
     /**
      * In certain cases, such as when combining XmlHttpRequests and push over
      * low bandwidth connections, messages may be received out of order by the
