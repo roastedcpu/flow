@@ -62,6 +62,7 @@ public class InitParameters implements Serializable {
     public static final String SERVLET_PARAMETER_DISABLE_XSRF_PROTECTION = "disable-xsrf-protection";
     public static final String SERVLET_PARAMETER_HEARTBEAT_INTERVAL = "heartbeatInterval";
     public static final String SERVLET_PARAMETER_SOURCE_HOST = "sourceHost";
+    public static final String SERVLET_PARAMETER_SESSION_ID = "sessionId";
     public static final String SERVLET_PARAMETER_WEB_COMPONENT_DISCONNECT = "webComponentDisconnect";
     public static final String SERVLET_PARAMETER_CLOSE_IDLE_SESSIONS = "closeIdleSessions";
     public static final String SERVLET_PARAMETER_PUSH_MODE = "pushMode";

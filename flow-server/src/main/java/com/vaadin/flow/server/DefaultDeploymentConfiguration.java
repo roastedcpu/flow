@@ -18,10 +18,7 @@ package com.vaadin.flow.server;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-import java.util.Scanner;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
@@ -69,6 +66,8 @@ public class DefaultDeploymentConfiguration
      */
     public static final int DEFAULT_HEARTBEAT_INTERVAL = 300;
 
+    public static final String DEFAULT_SESSION_ID = "undefined";
+
     public static final String DEFAULT_SOURCE_HOST = "unknown";
 
     /**
@@ -106,6 +105,7 @@ public class DefaultDeploymentConfiguration
     private boolean syncIdCheck;
     private boolean sendUrlsAsParameters;
     private boolean requestTiming;
+    private String sessionId;
 
     private static AtomicBoolean logging = new AtomicBoolean(true);
     private List<String> warnings = new ArrayList<>();
@@ -133,6 +133,7 @@ public class DefaultDeploymentConfiguration
         checkXsrfProtection(log);
         checkHeartbeatInterval();
         checkSourceHost();
+        checkSessionId();
         checkMaxMessageSuspendTimeout();
         checkWebComponentDisconnectTimeout();
         checkCloseIdleSessions();
@@ -218,6 +219,9 @@ public class DefaultDeploymentConfiguration
     public String getSourceHost() {
         return sourceHost;
     }
+
+    @Override
+    public String getSessionId() { return sessionId; }
 
     /**
      * {@inheritDoc}
@@ -383,6 +387,15 @@ public class DefaultDeploymentConfiguration
             e.printStackTrace();
             sourceHost = DEFAULT_SOURCE_HOST;
         }
+    }
+
+    private void checkSessionId() {
+        Object sessionIdObj = VaadinSession.getCurrent().getAttribute("reformsSessionId");
+        if(sessionIdObj == null) {
+            VaadinSession.getCurrent().setAttribute("reformsSessionId", UUID.randomUUID().toString());
+            sessionIdObj = VaadinSession.getCurrent().getAttribute("reformsSessionId");
+        }
+        sessionId = (String) sessionIdObj;
     }
 
     private void checkMaxMessageSuspendTimeout() {

@@ -23,6 +23,8 @@ import com.vaadin.client.gwt.elemental.js.util.Xhr;
 import com.vaadin.flow.shared.ApplicationConstants;
 import com.vaadin.flow.shared.util.SharedUtil;
 
+import java.util.UUID;
+
 /**
  * Handles sending of heartbeats to the server and reacting to the response
  *
@@ -63,6 +65,10 @@ public class Heartbeat {
                 registry.getApplicationConfiguration().getUIId());
 
         uri = SharedUtil.addGetParameter(uri, "sourceHost", registry.getApplicationConfiguration().getSourceHost());
+
+        uri = SharedUtil.addGetParameter(uri, "sessionId", registry.getApplicationConfiguration().getSessionId());
+
+        uri = SharedUtil.addGetParameter(uri, "r_uuid", UUID.randomUUID().toString());
 
         registry.getUILifecycle().addHandler(e -> {
             if (e.getUiLifecycle().isTerminated()) {

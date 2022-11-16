@@ -100,6 +100,9 @@ public @interface VaadinServletConfiguration {
     @InitParameterName(InitParameters.SERVLET_PARAMETER_SOURCE_HOST)
     String sourceHost() default DefaultDeploymentConfiguration.DEFAULT_SOURCE_HOST;
 
+    @InitParameterName(InitParameters.SERVLET_PARAMETER_SESSION_ID)
+    String sessionId() default DefaultDeploymentConfiguration.DEFAULT_SESSION_ID;
+
     /**
      * Whether a session should be closed when all its open UIs have been idle
      * for longer than its configured maximum inactivity time. The default value
