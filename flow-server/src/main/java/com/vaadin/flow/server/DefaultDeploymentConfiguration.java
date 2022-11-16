@@ -390,11 +390,17 @@ public class DefaultDeploymentConfiguration
     }
 
     private void checkSessionId() {
-        Object sessionIdObj = VaadinSession.getCurrent().getAttribute("reformsSessionId");
-        if(sessionIdObj == null) {
-            VaadinSession.getCurrent().setAttribute("reformsSessionId", UUID.randomUUID().toString());
+        Object sessionIdObj;
+
+        try {
             sessionIdObj = VaadinSession.getCurrent().getAttribute("reformsSessionId");
+            if (sessionIdObj == null) {
+                VaadinSession.getCurrent().setAttribute("reformsSessionId", UUID.randomUUID().toString());
+            }
+        } catch (Exception ex) {
+            VaadinSession.getCurrent().setAttribute("reformsSessionId", UUID.randomUUID().toString());
         }
+        sessionIdObj = VaadinSession.getCurrent().getAttribute("reformsSessionId");
         sessionId = (String) sessionIdObj;
     }
 
