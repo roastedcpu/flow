@@ -47,7 +47,7 @@ public class Heartbeat {
 
     public native String getReformsSessionId()
     /*-{
-        return window.reformsSessionId;
+        return $wnd.reformsSessionId;
     }-*/;
 
     /**
@@ -71,20 +71,12 @@ public class Heartbeat {
 
         uri = SharedUtil.addGetParameter(uri, "sourceHost", registry.getApplicationConfiguration().getSourceHost());
 
-        uri = SharedUtil.addGetParameter(uri, "sessionId", getReformsSessionId());
-
-
-        StringBuilder sb = new StringBuilder();
-        Random random = new Random();
-        for (int i=0;i<20;i++) { sb.append('a'+random.nextInt(26)); }
-
-        uri = SharedUtil.addGetParameter(uri, "r_uuid", sb.toString());
-
         registry.getUILifecycle().addHandler(e -> {
             if (e.getUiLifecycle().isTerminated()) {
                 setInterval(-1);
             }
         });
+
     }
 
     /**
@@ -94,7 +86,15 @@ public class Heartbeat {
         timer.cancel();
 
         Console.debug("Sending heartbeat request...");
-        Xhr.post(uri, null, "text/plain; charset=utf-8", new Xhr.Callback() {
+
+        String uri2 = SharedUtil.addGetParameter(uri, "sessionId", getReformsSessionId());
+
+        StringBuilder sb = new StringBuilder();
+        Random random = new Random();
+        for (int i=0;i<20;i++) { sb.append('a'+random.nextInt(26)); }
+        uri2 = SharedUtil.addGetParameter(uri2, "r_uuid", sb.toString());
+
+        Xhr.post(uri2, null, "text/plain; charset=utf-8", new Xhr.Callback() {
 
             @Override
             public void onSuccess(XMLHttpRequest xhr) {
