@@ -1504,9 +1504,6 @@ public class BootstrapHandler extends SynchronizedRequestHandler {
             appConfig.put("sourceHost",
                     deploymentConfiguration.getSourceHost());
 
-            appConfig.put("sessionId",
-                    deploymentConfiguration.getSourceHost());
-
             appConfig.put("maxMessageSuspendTimeout",
                     deploymentConfiguration.getMaxMessageSuspendTimeout());
 

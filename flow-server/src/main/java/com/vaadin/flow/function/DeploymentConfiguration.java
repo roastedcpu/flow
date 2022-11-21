@@ -104,8 +104,6 @@ public interface DeploymentConfiguration extends Serializable {
 
     String getSourceHost();
 
-    String getSessionId();
-
     /**
      * In certain cases, such as when combining XmlHttpRequests and push over
      * low bandwidth connections, messages may be received out of order by the

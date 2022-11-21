@@ -45,6 +45,11 @@ public class Heartbeat {
 
     private final Registry registry;
 
+    public native String getReformsSessionId()
+    /*-{
+        return window.reformsSessionId;
+    }-*/;
+
     /**
      * Creates a new instance connected to the given registry.
      *
@@ -66,7 +71,7 @@ public class Heartbeat {
 
         uri = SharedUtil.addGetParameter(uri, "sourceHost", registry.getApplicationConfiguration().getSourceHost());
 
-        uri = SharedUtil.addGetParameter(uri, "sessionId", registry.getApplicationConfiguration().getSessionId());
+        uri = SharedUtil.addGetParameter(uri, "sessionId", getReformsSessionId());
 
 
         StringBuilder sb = new StringBuilder();

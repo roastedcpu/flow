@@ -192,11 +192,6 @@ public class PropertyDeploymentConfiguration
     }
 
     @Override
-    public String getSessionId() {
-        return DefaultDeploymentConfiguration.DEFAULT_SESSION_ID;
-    }
-
-    @Override
     public int getMaxMessageSuspendTimeout() {
         return DefaultDeploymentConfiguration.DEFAULT_MAX_MESSAGE_SUSPEND_TIMEOUT;
     }

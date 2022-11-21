@@ -133,7 +133,6 @@ public class DefaultDeploymentConfiguration
         checkXsrfProtection(log);
         checkHeartbeatInterval();
         checkSourceHost();
-        checkSessionId();
         checkMaxMessageSuspendTimeout();
         checkWebComponentDisconnectTimeout();
         checkCloseIdleSessions();
@@ -219,9 +218,6 @@ public class DefaultDeploymentConfiguration
     public String getSourceHost() {
         return sourceHost;
     }
-
-    @Override
-    public String getSessionId() { return sessionId; }
 
     /**
      * {@inheritDoc}
@@ -387,21 +383,6 @@ public class DefaultDeploymentConfiguration
             e.printStackTrace();
             sourceHost = DEFAULT_SOURCE_HOST;
         }
-    }
-
-    private void checkSessionId() {
-        Object sessionIdObj;
-
-        try {
-            sessionIdObj = VaadinSession.getCurrent().getAttribute("reformsSessionId");
-            if (sessionIdObj == null) {
-                VaadinSession.getCurrent().setAttribute("reformsSessionId", UUID.randomUUID().toString());
-            }
-        } catch (Exception ex) {
-            VaadinSession.getCurrent().setAttribute("reformsSessionId", UUID.randomUUID().toString());
-        }
-        sessionIdObj = VaadinSession.getCurrent().getAttribute("reformsSessionId");
-        sessionId = (String) sessionIdObj;
     }
 
     private void checkMaxMessageSuspendTimeout() {

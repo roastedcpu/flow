@@ -22,13 +22,8 @@ import java.io.IOException;
 
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.internal.UIInternals;
-import com.vaadin.flow.server.HandlerHelper;
+import com.vaadin.flow.server.*;
 import com.vaadin.flow.server.HandlerHelper.RequestType;
-import com.vaadin.flow.server.SessionExpiredHandler;
-import com.vaadin.flow.server.SynchronizedRequestHandler;
-import com.vaadin.flow.server.VaadinRequest;
-import com.vaadin.flow.server.VaadinResponse;
-import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.shared.ApplicationConstants;
 
 /**
@@ -67,6 +62,13 @@ public class HeartbeatHandler extends SynchronizedRequestHandler
         if (ui != null) {
             ui.getInternals()
                     .setLastHeartbeatTimestamp(System.currentTimeMillis());
+
+            Object sIdO = session.getAttribute("reformsSessionId");
+            ui.access(() -> {
+                ui.getElement().executeJs("window.reformsSessionId = '" + (sIdO == null ? "unknown" : sIdO.toString()) + "';");
+                ui.getElement().executeJs("console.log('window.reformsSessionId = " + (sIdO == null ? "unknown" : sIdO.toString()) + "')");
+            });
+
             // Ensure that the browser does not cache heartbeat responses.
             // iOS 6 Safari requires this (https://github.com/vaadin/framework/issues/3226)
             response.setHeader("Cache-Control", "no-cache");

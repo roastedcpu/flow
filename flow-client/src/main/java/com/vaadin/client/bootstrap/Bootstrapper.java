@@ -160,9 +160,6 @@ public class Bootstrapper implements EntryPoint {
         conf.setSourceHost(
                 jsoConfiguration.getConfigString("sourceHost"));
 
-        conf.setSessionId(
-                jsoConfiguration.getConfigString("sessionId"));
-
         conf.setMaxMessageSuspendTimeout(
                 jsoConfiguration.getConfigInteger("maxMessageSuspendTimeout"));
 
