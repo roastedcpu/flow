@@ -50,6 +50,11 @@ public class Heartbeat {
         return $wnd.reformsSessionId;
     }-*/;
 
+    public native String getReformsUiId()
+    /*-{
+        return $wnd.reformsUiId;
+    }-*/;
+
     /**
      * Creates a new instance connected to the given registry.
      *
@@ -88,6 +93,7 @@ public class Heartbeat {
         Console.debug("Sending heartbeat request...");
 
         String uri2 = SharedUtil.addGetParameter(uri, "sessionId", getReformsSessionId());
+        uri2 = SharedUtil.addGetParameter(uri, "uiId", getReformsUiId());
 
         StringBuilder sb = new StringBuilder();
         Random random = new Random();
