@@ -15,6 +15,8 @@
  */
 package com.vaadin.client.communication;
 
+
+import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.xhr.client.XMLHttpRequest;
 import com.vaadin.client.Console;
@@ -93,12 +95,42 @@ public class Heartbeat {
         Console.debug("Sending heartbeat request...");
 
         String uri2 = SharedUtil.addGetParameter(uri, "sessionId", getReformsSessionId());
-        uri2 = SharedUtil.addGetParameter(uri, "uiId", getReformsUiId());
+        uri2 = SharedUtil.addGetParameter(uri2, "uiId", getReformsUiId());
 
-        StringBuilder sb = new StringBuilder();
+        String jsessionCookie = Cookies.getCookie("JSESSIONID");
+        if (jsessionCookie != null && jsessionCookie.length() > 12) {
+            uri2 = SharedUtil.addGetParameter(uri2, "JSESSIONID", jsessionCookie.substring(jsessionCookie.length() - 12));
+        } else {
+            uri2 = SharedUtil.addGetParameter(uri2, "JSESSIONID", "novalue");
+        }
+
+        String fivaldiAspCookie = Cookies.getCookie("fivaldi_asp");
+        if (fivaldiAspCookie != null && fivaldiAspCookie.length() > 6) {
+            uri2 = SharedUtil.addGetParameter(uri2, "fivaldi_asp", fivaldiAspCookie.substring(fivaldiAspCookie.length() - 6));
+        } else {
+            uri2 = SharedUtil.addGetParameter(uri2, "fivaldi_asp", "novalue");
+        }
+
+        String awsalbappCookie = Cookies.getCookie("AWSALBAPP-0");
+        if (awsalbappCookie != null && awsalbappCookie.length() > 6) {
+            uri2 = SharedUtil.addGetParameter(uri2, "AWSALBAPP-0", awsalbappCookie.substring(awsalbappCookie.length() - 6));
+        } else {
+            uri2 = SharedUtil.addGetParameter(uri2, "AWSALBAPP-0", "novalue");
+        }
+
+        String awsalbCookie = Cookies.getCookie("AWSALB");
+        String awsalbcorsCookie = Cookies.getCookie("AWSALBCORS");
+        if (awsalbCookie != null && awsalbcorsCookie != null) {
+            uri2 = SharedUtil.addGetParameter(uri2, "awsCookiesMatch", awsalbCookie.equals(awsalbcorsCookie) ? "match" : "nomatch");
+        } else {
+            uri2 = SharedUtil.addGetParameter(uri2, "awsCookiesMatch", "novalue");
+        }
+
+
+        /*StringBuilder sb = new StringBuilder();
         Random random = new Random();
         for (int i=0;i<20;i++) { sb.append('a'+random.nextInt(26)); }
-        uri2 = SharedUtil.addGetParameter(uri2, "r_uuid", sb.toString());
+        uri2 = SharedUtil.addGetParameter(uri2, "r_uuid", sb.toString());*/
 
         Xhr.post(uri2, null, "text/plain; charset=utf-8", new Xhr.Callback() {
 
