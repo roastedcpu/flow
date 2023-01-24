@@ -149,12 +149,17 @@ public class AtmospherePushConnection implements PushConnection {
      */
     private Command pendingDisconnectCommand;
 
+
     /**
      * The url to use for push requests.
      */
     private String url;
 
     private final Registry registry;
+    public native String getReformsSessionId()
+    /*-{
+        return $wnd.reformsSessionId;
+    }-*/;
 
     /**
      * Creates a new instance connected to the given registry.
@@ -213,6 +218,11 @@ public class AtmospherePushConnection implements PushConnection {
         pushUrl = SharedUtil.addGetParameter(pushUrl,
                 ApplicationConstants.UI_ID_PARAMETER,
                 registry.getApplicationConfiguration().getUIId());
+
+        pushUrl = SharedUtil.addGetParameter(pushUrl,
+                "reformsSessionId",
+                getReformsSessionId());
+
 
         String pushId = registry.getMessageHandler().getPushId();
         if (pushId != null) {
